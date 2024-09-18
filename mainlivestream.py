@@ -36,7 +36,7 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 
 
 options = PoseLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path="pose_landmarker_lite.task"),
+    base_options=BaseOptions(model_asset_path="pose_landmarker_heavy.task"),
     running_mode=VisionRunningMode.LIVE_STREAM,
     result_callback=print_result)
 
@@ -64,16 +64,17 @@ def draw_landmarks_on_image(rgb_image, detection_result):
 
 with PoseLandmarker.create_from_options(options) as landmarker:
     cap = cv2.VideoCapture(0)
-    start_time = time.time()
+    # start_time = time.time()
+    frame_timestamp_ms = 0
     while cap.isOpened():
         success, frame = cap.read()
         # frame_timestamp_ms = frame_index * frame_interval
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        # frame_timestamp_ms+=1
+        frame_timestamp_ms+=1
         # frame_timestamp_ms = int(cap.get(cv2.CAP_PROP_POS_MSEC))
         # # Create a MediaPipe Image object
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
-        frame_timestamp_ms = int(time.time() - start_time)
+        # frame_timestamp_ms = int(time.time() - start_time)
         landmarker.detect_async(mp_image, frame_timestamp_ms)
         # height, width, _ = frame.shape
         # Normalized coordinates (0.0 to 1.0)
